@@ -2,9 +2,9 @@ package com.eventify.service;
 
 import com.eventify.model.Venue;
 import com.eventify.repository.VenueRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class VenueService {
@@ -15,23 +15,32 @@ public class VenueService {
         this.venueRepository = venueRepository;
     }
 
-    public Venue create(Venue venue) {
-
-        if (venue.getNombre() == null || venue.getNombre().isBlank()) {
-            throw new IllegalArgumentException("El nombre del evento es obligatorio");
-        }
-
-        if (venue.getCapacidad() <= 0){
-            throw new IllegalArgumentException("La capacidad tiene que ser mayora 0");
-        }
-
-        return venueRepository.save(venue);
-
+    public Page<Venue> listar(Pageable pageable) {
+        return venueRepository.findAll(pageable);
     }
 
-    public List<Venue> finaAll() {
+    public Venue buscarPorId(Long id) {
+        return venueRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("id no encontrado"));
+    }
 
-        return venueRepository.findAll();
+    public Venue actualizar(Long id, Venue venue) {
 
+        Venue venueExistente = buscarPorId(id);
+
+        venueExistente.setNombre(venue.getNombre());
+        venueExistente.setDireccion(venue.getDireccion());
+        venueExistente.setCapacidad(venue.getCapacidad());
+
+        return venueRepository.save(venueExistente);
+    }
+
+    public Venue guardar(Venue venue) {
+        return venueRepository.save(venue);
+    }
+
+    public void eliminar(Long id) {
+        buscarPorId(id);
+        venueRepository.deleteById(id);
     }
 }

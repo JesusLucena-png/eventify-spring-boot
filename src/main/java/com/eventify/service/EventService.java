@@ -2,28 +2,18 @@ package com.eventify.service;
 
 import com.eventify.model.Event;
 import com.eventify.repository.EventRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /*
  * @Service
  *
- * Anotación de Spring que indica que esta clase pertenece
- * a la capa de servicios y contiene la lógica de negocio.
+ * Indica que esta clase pertenece a la capa de servicios
+ * y contiene la lógica de negocio de Eventify.
  *
- * También hace que Spring registre EventService como un Bean,
- * permitiendo que pueda ser inyectado en otras clases,
- * por ejemplo, en EventController.
- *
- * Bean:
- *
- * Un Bean es un objeto que es creado y administrado
- * por el contenedor de Spring.
- *
- * Spring se encarga de crear el objeto, mantenerlo
- * disponible y proporcionar sus dependencias cuando
- * otra clase las necesita.
+ * Spring registra EventService como un Bean y permite
+ * inyectarlo en otras clases, como EventController.
  */
 @Service
 public class EventService {
@@ -31,68 +21,92 @@ public class EventService {
     /*
      * Dependencia del repositorio.
      *
-     * El Service no guarda directamente los eventos.
-     * Delega el almacenamiento al EventRepository.
-     *
-     * final indica que la referencia se establece una sola vez
-     * mediante el constructor.
+     * El Service no se encarga directamente de almacenar
+     * los eventos. Delega esta responsabilidad al repositorio.
      */
     private final EventRepository eventRepository;
 
     /*
      * Inyección de dependencias por constructor.
      *
-     * Spring detecta el EventRepository y lo entrega automáticamente
-     * al crear el EventService.
-     *
-     * Esta forma cumple con el requisito de usar
-     * inyección estricta por constructor.
+     * Spring proporciona automáticamente el EventRepository
+     * cuando crea una instancia de EventService.
      */
     public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
     }
 
     /*
-     * Registra un nuevo evento.
+     * Listar eventos.
      *
-     * Aquí se encuentra la lógica de negocio, no en el Controller.
+     * Pageable permite controlar:
+     *
+     * - Número de página.
+     * - Cantidad de elementos por página.
+     * - Ordenamiento.
+     *
+     * Ejemplo:
+     *
+     * ?page=0&size=5&sort=nombre,asc
      */
-    public Event create(Event event) {
-
-        /*
-         * Validamos que el nombre exista y no esté vacío.
-         *
-         * getNombre() == null:
-         * evita intentar utilizar un valor que no existe.
-         *
-         * isBlank():
-         * detecta una cadena vacía o que solo contiene espacios.
-         *
-         * Si la validación falla, se lanza una excepción
-         * y el Repository NO llega a ejecutarse.
-         */
-        if (event.getNombre() == null || event.getNombre().isBlank()) {
-            throw new IllegalArgumentException("El nombre del evento es obligatorio");
-        }
-
-        /*
-         * Si los datos son válidos, delegamos el almacenamiento
-         * al Repository.
-         */
-        return eventRepository.save(event);
-
+    public Page<Event> listar(Pageable pageable) {
+        return eventRepository.findAll(pageable);
     }
 
     /*
-     * Obtiene todos los eventos registrados.
+     * Buscar un evento por su ID.
      *
-     * El Service solicita los datos al Repository y los devuelve
-     * al Controller.
+     * Si el evento existe, se devuelve.
+     *
+     * Si no existe, se lanza una excepción para posteriormente
+     * convertirla en una respuesta HTTP 404.
      */
-    public List<Event> finaAll() {
-
-        return eventRepository.findAll();
-
+    public Event buscarPorId(Long id) {
+        return eventRepository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException("Evento con ID " + id + " no encontrado"));
     }
 
+    /*
+     * Crear un nuevo evento.
+     *
+     * JpaRepository se encarga de guardar el objeto
+     * dentro de la base de datos.
+     */
+    public Event guardar(Event event) {
+        return eventRepository.save(event);
+    }
+
+    /*
+     * Actualizar un evento existente.
+     *
+     * Primero se busca el evento para comprobar que exista.
+     * Si no existe, buscarPorId() genera el error.
+     *
+     * Después se actualizan sus datos y se guarda nuevamente.
+     */
+    public Event actualizar(Long id, Event event) {
+
+        Event eventoExistente = buscarPorId(id);
+
+        eventoExistente.setNombre(event.getNombre());
+        eventoExistente.setFecha(event.getFecha());
+        eventoExistente.setDescripcion(event.getDescripcion());
+
+        return eventRepository.save(eventoExistente);
+    }
+
+    /*
+     * Eliminar un evento.
+     *
+     * Primero comprobamos que exista.
+     * De esta manera, un ID inexistente puede generar
+     * posteriormente una respuesta HTTP 404.
+     */
+    public void eliminar(Long id) {
+
+        buscarPorId(id);
+
+        eventRepository.deleteById(id);
+    }
 }
