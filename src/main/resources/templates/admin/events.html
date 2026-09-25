@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Eventos | Eventify</title>
+</head>
+<body>
+
+<h1>Eventos</h1>
+
+<div th:if="${#lists.isEmpty(eventos)}">
+    Actualmente no hay eventos programados.
+</div>
+
+<table th:unless="${#lists.isEmpty(eventos)}">
+
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Fecha</th>
+        <th>Descripción</th>
+    </tr>
+    </thead>
+
+    <tbody>
+
+    <tr th:each="evento : ${eventos}">
+
+        <td th:text="${evento.id}"></td>
+
+        <td th:text="${evento.nombre}"></td>
+
+        <td th:text="${evento.fecha}"></td>
+
+        <td th:text="${evento.descripcion}"></td>
+
+    </tr>
+
+    </tbody>
+
+</table>
+
+<a href="/admin/events/new">Nuevo evento</a>
+
+</body>
+</html>
