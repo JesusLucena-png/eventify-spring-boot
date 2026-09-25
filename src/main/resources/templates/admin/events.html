@@ -1,47 +1,116 @@
 <!DOCTYPE html>
 <html lang="es" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <title>Eventos | Eventify</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 40px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        .empty-message {
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #222;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f8f8f8;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 18px;
+            background-color: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .button:hover {
+            background-color: #444;
+        }
+    </style>
 </head>
+
 <body>
 
-<h1>Eventos</h1>
+<div class="container">
 
-<div th:if="${#lists.isEmpty(eventos)}">
-    Actualmente no hay eventos programados.
+    <h1>Eventos</h1>
+
+    <div class="empty-message" th:if="${#lists.isEmpty(eventos)}">
+        Actualmente no hay eventos programados.
+    </div>
+
+    <table th:unless="${#lists.isEmpty(eventos)}">
+
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Fecha</th>
+            <th>Descripción</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        <tr th:each="evento : ${eventos}">
+            <td th:text="${evento.id}"></td>
+            <td th:text="${evento.nombre}"></td>
+            <td th:text="${evento.fecha}"></td>
+            <td th:text="${evento.descripcion}"></td>
+        </tr>
+        </tbody>
+
+    </table>
+
+    <a class="button" href="/admin/events/new">
+        Nuevo evento
+    </a>
+
 </div>
-
-<table th:unless="${#lists.isEmpty(eventos)}">
-
-    <thead>
-    <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Fecha</th>
-        <th>Descripción</th>
-    </tr>
-    </thead>
-
-    <tbody>
-
-    <tr th:each="evento : ${eventos}">
-
-        <td th:text="${evento.id}"></td>
-
-        <td th:text="${evento.nombre}"></td>
-
-        <td th:text="${evento.fecha}"></td>
-
-        <td th:text="${evento.descripcion}"></td>
-
-    </tr>
-
-    </tbody>
-
-</table>
-
-<a href="/admin/events/new">Nuevo evento</a>
 
 </body>
 </html>

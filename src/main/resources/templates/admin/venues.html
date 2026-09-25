@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Venues | Eventify</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 40px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        .empty-message {
+            padding: 20px;
+            background-color: #f0f0f0;
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 14px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #222;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f8f8f8;
+        }
+
+        .button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 18px;
+            background-color: #222;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+
+        .button:hover {
+            background-color: #444;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Venues</h1>
+
+    <div class="empty-message" th:if="${#lists.isEmpty(venues)}">
+        Actualmente no hay venues registrados.
+    </div>
+
+    <table th:unless="${#lists.isEmpty(venues)}">
+
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Nombre</th>
+            <th>Dirección</th>
+            <th>Capacidad</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        <tr th:each="venue : ${venues}">
+            <td th:text="${venue.id}"></td>
+            <td th:text="${venue.nombre}"></td>
+            <td th:text="${venue.direccion}"></td>
+            <td th:text="${venue.capacidad}"></td>
+        </tr>
+
+        </tbody>
+
+    </table>
+
+    <a class="button" href="/admin/venues/new">
+        Nuevo venue
+    </a>
+
+</div>
+
+</body>
+</html>

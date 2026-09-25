@@ -4,32 +4,131 @@
 <head>
     <meta charset="UTF-8">
     <title>Nuevo evento | Eventify</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 40px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+        }
+
+        h1 {
+            margin-bottom: 25px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input,
+        textarea {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-family: Arial, sans-serif;
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        button,
+        .back {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 6px;
+            background-color: #222;
+            color: white;
+            text-decoration: none;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        button:hover,
+        .back:hover {
+            background-color: #444;
+        }
+
+        .back {
+            display: block;
+            margin-top: 15px;
+        }
+    </style>
 </head>
 
 <body>
 
-<h1>Registrar evento</h1>
+<div class="container">
 
-<form th:action="@{/admin/events}" th:object="${event}" method="post">
+    <h1>Registrar evento</h1>
 
-    <label>Nombre</label>
-    <input type="text" th:field="*{nombre}">
+    <form th:action="@{/admin/events}" th:object="${event}" method="post">
 
-    <label>Fecha</label>
-    <input type="datetime-local" th:field="*{fecha}">
+        <label for="nombre">Nombre</label>
+        <input
+                type="text"
+                id="nombre"
+                th:field="*{nombre}"
+                required
+        >
 
-    <label>Descripción</label>
-    <textarea th:field="*{descripcion}"></textarea>
+        <label for="fecha">Fecha</label>
+        <input
+                type="datetime-local"
+                id="fecha"
+                th:field="*{fecha}"
+                required
+        >
 
-    <button type="submit">
-        Guardar
-    </button>
+        <label for="direccion">Dirección</label>
+        <input
+                type="text"
+                id="direccion"
+                th:field="*{direccion}"
+                required
+        >
 
-</form>
+        <label for="descripcion">Descripción</label>
+        <textarea
+                id="descripcion"
+                th:field="*{descripcion}"
+        ></textarea>
 
-<a href="/admin/events">
-    Volver
-</a>
+        <button type="submit">
+            Guardar
+        </button>
+
+    </form>
+
+    <a class="back" href="/admin/events">
+        Volver
+    </a>
+
+</div>
 
 </body>
 </html>
+
